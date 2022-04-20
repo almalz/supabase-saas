@@ -108,6 +108,105 @@ export interface paths {
       };
     };
   };
+  "/profile": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profile.id"];
+          created_at?: parameters["rowFilter.profile.created_at"];
+          is_subscribed?: parameters["rowFilter.profile.is_subscribed"];
+          interval?: parameters["rowFilter.profile.interval"];
+          stripe_customer?: parameters["rowFilter.profile.stripe_customer"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["profile"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** profile */
+          profile?: definitions["profile"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profile.id"];
+          created_at?: parameters["rowFilter.profile.created_at"];
+          is_subscribed?: parameters["rowFilter.profile.is_subscribed"];
+          interval?: parameters["rowFilter.profile.interval"];
+          stripe_customer?: parameters["rowFilter.profile.stripe_customer"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.profile.id"];
+          created_at?: parameters["rowFilter.profile.created_at"];
+          is_subscribed?: parameters["rowFilter.profile.is_subscribed"];
+          interval?: parameters["rowFilter.profile.interval"];
+          stripe_customer?: parameters["rowFilter.profile.stripe_customer"];
+        };
+        body: {
+          /** profile */
+          profile?: definitions["profile"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
 }
 
 export interface definitions {
@@ -127,6 +226,25 @@ export interface definitions {
     title?: string;
     /** Format: text */
     description?: string;
+  };
+  profile: {
+    /**
+     * Format: uuid
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /** Format: boolean */
+    is_subscribed?: boolean;
+    /** Format: text */
+    interval?: string;
+    /** Format: text */
+    stripe_customer?: string;
   };
 }
 
@@ -173,6 +291,18 @@ export interface parameters {
   "rowFilter.lessons.title": string;
   /** Format: text */
   "rowFilter.lessons.description": string;
+  /** @description profile */
+  "body.profile": definitions["profile"];
+  /** Format: uuid */
+  "rowFilter.profile.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.profile.created_at": string;
+  /** Format: boolean */
+  "rowFilter.profile.is_subscribed": string;
+  /** Format: text */
+  "rowFilter.profile.interval": string;
+  /** Format: text */
+  "rowFilter.profile.stripe_customer": string;
 }
 
 export interface operations {}

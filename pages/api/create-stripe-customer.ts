@@ -4,6 +4,11 @@ import { supabase } from '../../lib/supabase'
 import { definitions } from '../../types/supabase'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+
+  if(req.query.API_ROUTE_SECRET !== process.env.API_ROUTE_SECRET){
+    return res.status(401).send("You are not authorized to call the API")
+  }
+
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2020-08-27',
     typescript: true,

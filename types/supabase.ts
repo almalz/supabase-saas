@@ -108,6 +108,99 @@ export interface paths {
       };
     };
   };
+  "/premium_content": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.premium_content.id"];
+          created_at?: parameters["rowFilter.premium_content.created_at"];
+          video_url?: parameters["rowFilter.premium_content.video_url"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["premium_content"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** premium_content */
+          premium_content?: definitions["premium_content"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.premium_content.id"];
+          created_at?: parameters["rowFilter.premium_content.created_at"];
+          video_url?: parameters["rowFilter.premium_content.video_url"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.premium_content.id"];
+          created_at?: parameters["rowFilter.premium_content.created_at"];
+          video_url?: parameters["rowFilter.premium_content.video_url"];
+        };
+        body: {
+          /** premium_content */
+          premium_content?: definitions["premium_content"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/profile": {
     get: {
       parameters: {
@@ -117,6 +210,7 @@ export interface paths {
           is_subscribed?: parameters["rowFilter.profile.is_subscribed"];
           interval?: parameters["rowFilter.profile.interval"];
           stripe_customer?: parameters["rowFilter.profile.stripe_customer"];
+          email?: parameters["rowFilter.profile.email"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -172,6 +266,7 @@ export interface paths {
           is_subscribed?: parameters["rowFilter.profile.is_subscribed"];
           interval?: parameters["rowFilter.profile.interval"];
           stripe_customer?: parameters["rowFilter.profile.stripe_customer"];
+          email?: parameters["rowFilter.profile.email"];
         };
         header: {
           /** Preference */
@@ -191,6 +286,7 @@ export interface paths {
           is_subscribed?: parameters["rowFilter.profile.is_subscribed"];
           interval?: parameters["rowFilter.profile.interval"];
           stripe_customer?: parameters["rowFilter.profile.stripe_customer"];
+          email?: parameters["rowFilter.profile.email"];
         };
         body: {
           /** profile */
@@ -227,6 +323,22 @@ export interface definitions {
     /** Format: text */
     description?: string;
   };
+  premium_content: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     * This is a Foreign Key to `lessons.id`.<fk table='lessons' column='id'/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /** Format: text */
+    video_url?: string;
+  };
   profile: {
     /**
      * Format: uuid
@@ -245,6 +357,8 @@ export interface definitions {
     interval?: string;
     /** Format: text */
     stripe_customer?: string;
+    /** Format: text */
+    email?: string;
   };
 }
 
@@ -291,6 +405,14 @@ export interface parameters {
   "rowFilter.lessons.title": string;
   /** Format: text */
   "rowFilter.lessons.description": string;
+  /** @description premium_content */
+  "body.premium_content": definitions["premium_content"];
+  /** Format: bigint */
+  "rowFilter.premium_content.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.premium_content.created_at": string;
+  /** Format: text */
+  "rowFilter.premium_content.video_url": string;
   /** @description profile */
   "body.profile": definitions["profile"];
   /** Format: uuid */
@@ -303,6 +425,8 @@ export interface parameters {
   "rowFilter.profile.interval": string;
   /** Format: text */
   "rowFilter.profile.stripe_customer": string;
+  /** Format: text */
+  "rowFilter.profile.email": string;
 }
 
 export interface operations {}

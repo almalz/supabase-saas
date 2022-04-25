@@ -1,8 +1,8 @@
 import { GetStaticProps, NextPage } from 'next'
 import Stripe from 'stripe'
+import { useAuth } from '../context/auth'
 
 type PricingPageProps = {
-  // prices: Stripe.Price[]
   plans: Plan[] | undefined
 }
 
@@ -14,13 +14,26 @@ type Plan = {
   currency: string
 }
 
-const Pricing: NextPage<PricingPageProps> = ({plans}) => {
+const Pricing: NextPage<PricingPageProps> = ({ plans }) => {
+  const { user, login, isLoading } = useAuth()
+
+  const showSubscribeButton = !!user && !user.is_subscribed
+  const showCreateAccountButton = !user
+  const showManageSubscriptionButton = !!user && user.is_subscribed
+
   return (
     <div className='w-full max-w-3xl mx-auto py-16 flex justify-arround'>
       {plans?.map(plan => (
         <div key={plan.id} className="w-80 h-40 rounded shadow px-6 py-6">
           <h2 className="text-xl">{plan.name}</h2>
-          <p className="text-gray-500">{plan.price / 100} {plan.currency}/ {plan.interval}</p>
+          <p className="text-gray-500">{plan.price / 100} {plan.currency} / {plan.interval}</p>
+          {!isLoading && (
+            <>
+              {showSubscribeButton && <button>Subscribe</button>}
+              {showCreateAccountButton && <button onClick={login}>Create Account</button>}
+              {showManageSubscriptionButton && <button>Manage Subscription</button>}
+            </>
+          )}
         </div>
       ))}
     </div>
@@ -30,19 +43,19 @@ const Pricing: NextPage<PricingPageProps> = ({plans}) => {
 export const getStaticProps: GetStaticProps = async () => {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
     apiVersion: '2020-08-27',
-    typescript: true, 
+    typescript: true,
   })
 
-  const {data: prices} = await stripe.prices.list()
+  const { data: prices } = await stripe.prices.list()
 
   const plans = await Promise.all(prices.map(async (price) => {
-    if(price.product){
+    if (price.product) {
       const product = await stripe.products.retrieve(price.product as string)
-      return {id: price.id, name: product.name, price: price.unit_amount, interval: price.recurring?.interval, currency: price.currency}
+      return { id: price.id, name: product.name, price: price.unit_amount, interval: price.recurring?.interval, currency: price.currency }
     }
   }))
 
-  const sortedPlans = plans.sort((a,b) => (a?.price || 0) - (b?.price || 0))
+  const sortedPlans = plans.sort((a, b) => (a?.price || 0) - (b?.price || 0))
 
   return {
     props: {

@@ -9,15 +9,14 @@ const LessonDetails = ({
 }: {
   lesson: definitions['lessons']
 } & NextPage) => {
-
   const [videoUrl, setVideoUrl] = useState<string | undefined>()
 
-  const getPremiumContent =  async () => {
-    const {data} =  await supabase
-    .from<definitions['premium_content']>('premium_content')
-    .select('video_url')
-    .eq('id',lesson.id)
-    .single()
+  const getPremiumContent = async () => {
+    const { data } = await supabase
+      .from<definitions['premium_content']>('premium_content')
+      .select('video_url')
+      .eq('id', lesson.id)
+      .single()
 
     setVideoUrl(data?.video_url)
   }
@@ -26,13 +25,11 @@ const LessonDetails = ({
     getPremiumContent()
   }, [])
 
-  console.log(!!videoUrl)
-
   return (
     <div className="mx-auto w-full max-w-3xl py-16 px-8">
       <h1 className="mb-6 text-3xl">{lesson.title}</h1>
       {lesson.description && <p>{lesson.description}</p>}
-      {videoUrl && <Video url={videoUrl} width={"100%"}/>}
+      {videoUrl && <Video url={videoUrl} width={'100%'} />}
     </div>
   )
 }

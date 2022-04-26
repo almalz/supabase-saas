@@ -2,13 +2,10 @@ import { GetStaticProps, NextPage } from 'next'
 import Link from 'next/link'
 import { supabase } from '../lib/supabase'
 import { definitions } from '../types/supabase'
-import { useAuth } from '../context/auth'
 
 const Home = ({
   lessons,
 }: { lessons: definitions['lessons'][] } & NextPage) => {
-  const { user } = useAuth()
-  console.log({ user })
   return (
     <div className="mx-auto my-16 w-full max-w-3xl px-2">
       {lessons?.map((lesson) => (

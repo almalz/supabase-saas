@@ -1,4 +1,4 @@
-import { User } from '@supabase/supabase-js'
+import { Session, User } from '@supabase/supabase-js'
 import React, { createContext, useState, useEffect, useContext } from 'react'
 import { supabase } from '../lib/supabase'
 import { useRouter } from 'next/router'
@@ -19,6 +19,9 @@ const AuthContext = createContext<AuthConext | undefined>(undefined)
 const AuthProvider = ({ children }: AuthProvider) => {
   const router = useRouter()
   const [user, setUser] = useState<UserData | null>(supabase.auth.user())
+  const [session, setSession] = useState<Session | null>(
+    supabase.auth.session()
+  )
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -39,8 +42,23 @@ const AuthProvider = ({ children }: AuthProvider) => {
 
     supabase.auth.onAuthStateChange(() => {
       getUserProfile()
+      setSession(supabase.auth.session())
     })
   }, [])
+
+  useEffect(() => {
+    const event = (user ? 'SIGNED_IN' : 'SIGNED_OUT') as string
+    fetch(`/api/set-supabase-cookie`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        event: event,
+        session: session,
+      }),
+    })
+  }, [session, user])
 
   const login = async () => {
     await supabase.auth

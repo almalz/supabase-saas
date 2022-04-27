@@ -8,6 +8,7 @@ type UserData = User & definitions['profile']
 type AuthProvider = { children: React.ReactNode }
 type AuthConext = {
   user: UserData | null
+  session: Session | null
   setUser: (user: UserData) => void
   login: () => void
   logout: () => void
@@ -34,8 +35,9 @@ const AuthProvider = ({ children }: AuthProvider) => {
           .eq('id', sessionUser.id)
           .single()
         setUser({ ...sessionUser, ...profile })
+
+        setIsLoading(false)
       }
-      setIsLoading(false)
     }
 
     getUserProfile()
@@ -74,7 +76,7 @@ const AuthProvider = ({ children }: AuthProvider) => {
     router.push('/')
   }
 
-  const value = { user, setUser, login, logout, isLoading }
+  const value = { user, session, setUser, login, logout, isLoading }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

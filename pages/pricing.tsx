@@ -1,6 +1,7 @@
 import { GetStaticProps, NextPage } from 'next'
 import Stripe from 'stripe'
 import { useAuth } from '../context/auth'
+import { loadStripe } from '@stripe/stripe-js'
 
 type PricingPageProps = {
   plans: Plan[] | undefined
@@ -17,10 +18,11 @@ type Plan = {
 const Pricing: NextPage<PricingPageProps> = ({ plans }) => {
   const { user, login, isLoading } = useAuth()
 
-  const processSubscribtion = async (planId: string) => {
-    const res = await fetch(`/api/subscription/${planId}`)
+  const processSubscribtion = async (priceId: string) => {
+    const res = await fetch(`/api/subscription/${priceId}`)
     const data = await res.json()
-    console.log(data)
+    const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY || '')
+    await stripe?.redirectToCheckout({ sessionId: data.id })
   }
 
   const showSubscribeButton = !!user && !user.is_subscribed

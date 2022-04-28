@@ -33,8 +33,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     },
   ]
 
-  console.log({ priceId })
-
   const session = await stripe.checkout.sessions.create({
     customer: data?.stripe_customer,
     mode: 'subscription',

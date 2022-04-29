@@ -62,6 +62,21 @@ const AuthProvider = ({ children }: AuthProvider) => {
     })
   }, [session, user])
 
+  useEffect(() => {
+    if (user) {
+      const subscription = supabase
+        .from<definitions['profile']>(`profile:id=eq.${user.id}`)
+        .on('UPDATE', (payload) => {
+          setUser({ ...user, ...payload.new })
+        })
+        .subscribe()
+
+      return () => {
+        supabase.removeSubscription(subscription)
+      }
+    }
+  }, [user])
+
   const login = async () => {
     await supabase.auth
       .signIn({

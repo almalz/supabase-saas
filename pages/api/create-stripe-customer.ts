@@ -1,12 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import Stripe from 'stripe'
-import { supabase } from '../../lib/supabase'
+import { getServiceSupabase } from '../../lib/supabase'
 import { definitions } from '../../types/supabase'
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-
-  if(req.query.API_ROUTE_SECRET !== process.env.API_ROUTE_SECRET){
-    return res.status(401).send("You are not authorized to call the API")
+  if (req.query.API_ROUTE_SECRET !== process.env.API_ROUTE_SECRET) {
+    return res.status(401).send('You are not authorized to call the API')
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
@@ -17,6 +16,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const customer = await stripe.customers.create({
     email: req.body.record.email,
   })
+
+  const supabase = getServiceSupabase()
 
   await supabase
     .from<definitions['profile']>('profile')

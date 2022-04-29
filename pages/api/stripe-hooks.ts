@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { buffer } from 'micro'
 import Stripe from 'stripe'
+import { getServiceSupabase } from '../../lib/supabase'
+import { definitions } from '../../types/supabase'
 
 export const config = { api: { bodyParser: false } }
 
@@ -21,6 +23,29 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } catch (error) {
     console.error(error)
     return res.status(400).send(`Webhook error: ${error}`)
+  }
+
+  const supabase = getServiceSupabase()
+
+  switch (event.type) {
+    case 'customer.subscription.updated':
+      await supabase
+        .from<definitions['profile']>('profile')
+        .update({
+          is_subscribed: true,
+          interval: (event.data.object as any).items.data[0].plan.interval,
+        })
+        .eq('stripe_customer', (event.data.object as any).customer)
+      break
+    case 'customer.subscription.deleted':
+      await supabase
+        .from<definitions['profile']>('profile')
+        .update({
+          is_subscribed: false,
+          interval: null!,
+        })
+        .eq('stripe_customer', (event.data.object as any).customer)
+      break
   }
 
   console.log({ event })

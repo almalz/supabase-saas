@@ -2,6 +2,7 @@ import { GetStaticProps, NextPage } from 'next'
 import Stripe from 'stripe'
 import { useAuth } from '../context/auth'
 import { loadStripe } from '@stripe/stripe-js'
+import Link from 'next/link'
 
 type PricingPageProps = {
   plans: Plan[] | undefined
@@ -48,7 +49,9 @@ const Pricing: NextPage<PricingPageProps> = ({ plans }) => {
                 <button onClick={login}>Create Account</button>
               )}
               {showManageSubscriptionButton && (
-                <button>Manage Subscription</button>
+                <Link href="/dashboard">
+                  <a>Manage Subscription</a>
+                </Link>
               )}
             </>
           )}
